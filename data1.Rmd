@@ -53,14 +53,21 @@ Data1 %>% filter(name == c("China", "India", "U.S", "Aruba", "Angola")) %>%
 
    geom_line() + labs(x = "Time", y = "Co2 (Per Capita)")
 
-avg <- Data1 %>% group_by(region) %>% summarize(co2 = mean(co2_PC))
+Data1 %>% filter(region == c("Africa", "Americas", "Asia", "Europe", "Oceania")) %>% 
+  
+  
+   ggplot(aes(time, co2_PC,color = region)) +
 
-ggplot(avg, aes(region, co2, color = )) +
+   geom_line() + labs(x = "Time", y = "Co2 (Per Capita)")
+
+avg <- Data1 %>% group_by(region) %>% summarize(co2 = mean(co2_PC, na.rm = TRUE))
+
+ggplot(avg, aes(region, co2)) +
 
 geom_col()
 
 ```
-
+We can see Asia, Europe, and Americas are the biggest.
 ```{r GDP, echo=FALSE}
 Data1 %>% filter(time == 1960) %>% 
    ggplot(aes(GDP_PC, lifeExpectancy, color = region)) +
@@ -88,4 +95,24 @@ print(avg19)
 
 It looks like it was correct to say that life expectancy went up.
 
+```{r GDP plot, echo=FALSE}
+Data1 %>% filter(time == 1960) %>% 
+   ggplot(aes(GDP_PC, lifeExpectancy,)) +
+  
+geom_col()
 
+Data1 %>% filter(time == 2019) %>% 
+   ggplot(aes(GDP_PC, lifeExpectancy,)) +
+  
+geom_col()
+
+Data1 %>%  filter(name == "U.S") %>% rank(avg60)
+
+Data1 %>%  filter(name == "U.S") %>% rank(avg19)
+
+rank <- Data1 %>%  filter(name == "U.S") %>% rank(avg60)
+
+print(rank/80)
+```
+
+This took me 20hr
