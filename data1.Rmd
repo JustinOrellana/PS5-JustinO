@@ -1,0 +1,91 @@
+---
+title: "GapData"
+output: html_document
+date: "2023-02-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## R Markdown
+```{r library, include=FALSE}
+library(tidyverse)
+```
+```{r gapminder, echo=FALSE}
+Data1 <- read.csv(file = "gapminder.csv", header = TRUE, sep = "\t")
+head(Data1, 3)
+
+Diso3 <- Data1 %>% count(iso3)
+Diso2 <- Data1 %>% count(iso2)
+Dname <- Data1 %>% count(name)
+print(Diso3)
+print(Diso2)
+print(Dname)
+
+str_subset(Data1$iso2, "^.{3,}$")
+
+str_subset(Data1$iso3, "^.{4,}$")
+
+max(Data1$time, na.rm = TRUE)
+min(Data1$time, na.rm = TRUE)
+
+co2_NA <- Data1 %>% count(is.na(co2))
+co2_PC_NA <- Data1 %>% count(is.na(co2_PC))
+print(co2_PC_NA)
+print(co2_NA)
+print(co2_PC_NA + co2_NA)
+co2_All <- Data1$co2 + Data1$co2_PC
+```
+It looks like there's no repeating iso-2 code and there's 2 repeating iso-3 codes which are CHANISL and NLD CURACAO
+
+```{r Co2 plot, echo=FALSE}
+Data1 %>% filter(name == c("China", "India", "U.S", "Aruba", "Angola")) %>% 
+   ggplot(aes(time, co2,
+
+              color = name)) +
+  
+geom_line() + labs(x = "Time", y = "Co2")
+
+Data1 %>% filter(name == c("China", "India", "U.S", "Aruba", "Angola")) %>% 
+  
+  
+   ggplot(aes(time, co2_PC,color = name)) +
+
+   geom_line() + labs(x = "Time", y = "Co2 (Per Capita)")
+
+avg <- Data1 %>% group_by(region) %>% summarize(co2 = mean(co2_PC))
+
+ggplot(avg, aes(region, co2, color = )) +
+
+geom_col()
+
+```
+
+```{r GDP, echo=FALSE}
+Data1 %>% filter(time == 1960) %>% 
+   ggplot(aes(GDP_PC, lifeExpectancy, color = region)) +
+  
+geom_point(size = 2) + labs(x = "Time", y = "Co2")
+
+Data1 %>% filter(time == 2019) %>% 
+   ggplot(aes(GDP_PC, lifeExpectancy, color = region)) +
+  
+geom_point(size = 2) + labs(x = "Time", y = "Co2")
+```
+
+We can see that we have a lot more data and that life expectancy has gone up for almost every region.
+
+```{r average, echo=FALSE}
+
+avg60 <- Data1 %>%  filter(time == 1960) %>% summarize(life = mean(lifeExpectancy, na.rm = TRUE))
+print(avg60)
+
+
+avg19 <- Data1 %>%  filter(time == 2019) %>% summarize(life = mean(lifeExpectancy, na.rm = TRUE))
+
+print(avg19)
+```
+
+It looks like it was correct to say that life expectancy went up.
+
+
